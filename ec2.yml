@@ -1,0 +1,27 @@
+---
+- name: criar uma ec2
+  vars:
+    state: present
+  hosts: localhost
+  tasks:
+    - amazon.aws.ec2_ami_info:
+        owners: 099720109477
+        filters:
+          name: "ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"
+      register: ami
+    - community.aws.ec2_instance:
+        name: ansible
+        key_name: ansible
+        security_group: ansible
+        instance_type: t2.micro
+        image_id: "{{ (ami.images | selectattr('name', 'defined') | sort(attribute='creation_date') | last).image_id }}"
+        wait: yes
+        state: "{{ state }}"
+    - community.aws.ec2_instance_info:
+        filters:
+          "tag:Name": ansible
+          instance-state-name: [ "running" ]
+      register: ec2
+    - debug:
+        msg: "{{ ec2.instances[0].public_ip_address }}"
+      when: ec2.instances[0].public_ip_address is defined
