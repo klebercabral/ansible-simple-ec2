@@ -23,5 +23,5 @@
           instance-state-name: [ "running" ]
       register: ec2
     - debug:
-        msg: "{{ ec2.instances[0].public_ip_address }}"
+        msg: "ssh ubuntu@{{ ec2.instances[0].public_ip_address }} -i ansible.pem"
       when: ec2.instances[0].public_ip_address is defined
