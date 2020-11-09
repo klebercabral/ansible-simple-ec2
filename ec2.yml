@@ -25,3 +25,17 @@
     - debug:
         msg: "ssh ubuntu@{{ ec2.instances[0].public_ip_address }} -i ansible.pem"
       when: ec2.instances[0].public_ip_address is defined
+- name: refresh
+  hosts: localhost
+  tasks:
+    - meta: refresh_inventory
+- name: instalar pacotes
+  hosts: all
+  become: true
+  tasks:
+    - ansible.builtin.apt:
+        update_cache: true
+        state: latest
+        name:
+          - nginx
+          - cowsay
