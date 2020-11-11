@@ -7,6 +7,9 @@ FROM mcr.microsoft.com/vscode/devcontainers/anaconda:0-3
 COPY environment.yml* .devcontainer/noop.txt /tmp/conda-tmp/
 RUN if [ -f "/tmp/conda-tmp/environment.yml" ]; then /opt/conda/bin/conda env update -n base -f /tmp/conda-tmp/environment.yml; fi \
     && rm -rf /tmp/conda-tmp
+RUN apt-get update && apt-get install -y \
+  tree \
+  && rm -rf /var/lib/apt/lists/*
 
 RUN pip3 install ansible boto3
 
